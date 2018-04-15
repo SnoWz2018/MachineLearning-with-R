@@ -1,0 +1,30 @@
+# 收集数据
+# http://www.dt.fee.unicamp.br/~tiago/smsspamcollection/ 数据要进行预处理，便于分析
+
+ sms_raw <- read.csv(file.choose(),stringsAsFactors=FALSE,quote="")                    # 手动添加header,排除's 这种文本被视为引，而不可读
+ str(sms_raw)                                                                          # 检查下结构
+ table(sms_raw$type)
+ 
+ install.packages("tm")
+ library(tm)                                                                           # 安装并加载文本挖掘添加包tm
+
+ sms_corpus <- Corpus(VectorSource(sms_raw$text))                                      # 建立一个包含训练数据中短信的语料库
+ print(sms_corpus)
+ inspect(sms_corpus)                                                                   # 查看语料库
+   
+ corpus_clean <- tm_map(sms_corpus,tolower)                                            # 全部小写 函数tm_map
+ corpus_clean <- tm_map(corpus_clean,removeNumbers)                                    # 去除所有数字
+ corpus_clean <- tm_map(corpus_clean,removeWords,stopwords())                          # 停用词
+ corpus_clean <- tm_map(corpus_clean,removePunctuation)                                # 去除标点符号
+ corpus_clean <- tm_map(corpus_clean,stripWhitespace)                                  # 去除上面步骤后 剩下的空格
+ 
+ sms_dtm <- DocumentTermMatrix(corpus_clean)                                           # 语料库标记化，返回稀疏矩阵
+ 
+ # 数据准备
+ sms_raw_train <- sms_raw[1:4169,]
+ sms_raw_test <- sms_raw[4170:5574,]
+ sms_dtm_train <- sms_dtm[1:4169,]
+ sms_dtm_test <- sms_dtm[4170:5574,]
+ sms_corpus_train <- corpus_clean[1:4169]
+ ss=ms_corpus_test <- corpus_clean[4170:5574]
+ 
