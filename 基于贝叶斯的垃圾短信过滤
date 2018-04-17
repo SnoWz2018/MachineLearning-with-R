@@ -42,8 +42,14 @@
  wordcloud(spa$text,max.words=40,scale=c(3,0.5))
  wordcloud(ham$text,max.words=40,scale=c(3,0.5))
 
- 
- 
+ findFreqTerms(sms_dtm_train,5)                                                        # 至少出现5次
+                                                                                       # tm version 0.5-10之后，Dictionary()就被移除了
+ convert_counts <- function(x){
+   x <- ifelse(x>0,1,0)
+   x <- factor(x,levels=c(0,1),labels=c(""No"",""Yes""))
+   return (x)
+ }
+   
  
  
  
