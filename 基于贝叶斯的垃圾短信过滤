@@ -26,5 +26,24 @@
  sms_dtm_train <- sms_dtm[1:4169,]
  sms_dtm_test <- sms_dtm[4170:5574,]
  sms_corpus_train <- corpus_clean[1:4169]
- ss=ms_corpus_test <- corpus_clean[4170:5574]
+ sms_corpus_test <- corpus_clean[4170:5574]
+ 
+ prop.table(table(sms_raw_train$type)
+ prop.table(table(sms_raw_test$type)                                                   # 测试
+ 
+ install.packages("wordcloud")
+ library(wordcloud)                                                                    # 可视化文本数据：词云
+ 
+ wordcloud(sms_corpus_train,min.freq = 40, random.order=FALSE)                         # 创建词云，最小频数这里设为40，可调
+ 
+ spa <- subset(sms_raw_train,type=="spa")                                              # 垃圾短信
+ ham <- subset(sms_raw_train,type=="ham")                                              # 非垃圾短信
+ 
+ wordcloud(spa$text,max.words=40,scale=c(3,0.5))
+ wordcloud(ham$text,max.words=40,scale=c(3,0.5))
+
+ 
+ 
+ 
+ 
  
