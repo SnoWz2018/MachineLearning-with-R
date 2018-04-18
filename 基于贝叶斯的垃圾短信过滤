@@ -44,12 +44,32 @@
 
  findFreqTerms(sms_dtm_train,5)                                                        # 至少出现5次
                                                                                        # tm version 0.5-10之后，Dictionary()就被移除了
- convert_counts <- function(x){
-   x <- ifelse(x>0,1,0)
-   x <- factor(x,levels=c(0,1),labels=c(""No"",""Yes""))
-   return (x)
- }
-   
+ sms_train <- DocumentTermMatrix(sms_corpus_train)                                     # 创建稀疏矩阵
+ sms_test <- DocumentTermMatrix(sms_corpus_test)
  
+ convert_counts <- function(x){                                                        # 将计数转换成因子Yes or No
+   x <- ifelse(x>0,1,0)
+   x <- factor(x,levels=c(0,1),labels=c("No","Yes"))
+   return (x)
+   
+ }
+ 
+ sms_train <- apply(sms_train,MARGIN=2,convert_counts)                                 # apply(),作用函数于矩阵的一个行或一个列
+ sms_test <- apply(sms_train,MARGIN=2,convert_counts)
+ 
+ # 基于数据训练模型
+ install.packages("e1071")                                                             # 使用该添加包中的朴素贝叶斯算法
+ library(e1071)
+ 
+ sms_classifier <- naiveBayes(sms_train,sms_raw_train$type)                            # 创建一个用于预测的分类器对象
+ sms_test_pred <- predict(sms_classifier,sms_test)
+ 
+ library(gmodels)
+ CrossTable(sms_test_pred,sms_raw_test$type,prop.chisq=FALSE,prop.t=FALSE,dnn=c('predicted','actual'))
+ 
+ sms_classifier2 <- naiveBayes(sms_train,sms_raw_train$type,laplace=1)
+ sms_test_pred2 <- predict(sms_classifier2,sms_test)
+ 
+ CrossTable(sms_test_pred2,sms_raw_test$type,prop.chisq=FALSE,prop.t=FALSE,prop.r=FALSE,dnn=c('predicted','actual'))
  
  
