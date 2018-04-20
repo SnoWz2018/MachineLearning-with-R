@@ -2,11 +2,14 @@
 http://archive.ics.uci.edu/ml/datasets/Mushroom
 # 数据准备
 
-mushroom <- read.csv(file.choose(),stringsAsFactors=FALSE,header=FALSE)
-mushroom$V17 <- NULL                                                                      # 去除无意义的数据
-table(mushroom$V1)                                                                        # 第一列为数据类型，edible\poisonous
+mushroom <- read.csv(file.choose(),stringsAsFactors=FALSE,header=TRUE)
+mushroom$xp <- NULL                                                                      # 去除无意义的数据
+table(mushroom$type)                                                                     # 第一列为数据类型，edible\poisonous
 
 install.packages("RWeka")
-library(RWeka)                                                                            # 这里要先配置java环境
+library(RWeka)                                                                           # 这里要先配置java环境
 
 mushroom_1R <- OneR(type ~ .,data=mushroom)
+
+Error in .jcall(o, "Ljava/lang/Class;", "getClass") : 
+  weka.core.UnsupportedAttributeTypeException: weka.classifiers.rules.OneR: Cannot handle string attributes!
