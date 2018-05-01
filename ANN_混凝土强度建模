@@ -1,0 +1,34 @@
+# 数据收集和准备
+https://archive.ics.uci.edu/ml/machine-learning-databases/concrete/compressive/
+
+concrete <- read.csv(file.choose(),stringsAsFactors=FALSE,header=TRUE)
+str(concrete)
+
+normalize <- function(x){                                                        # 数据01标准化
+return((x-min(x))/(max(x)-min(x)))
+}
+concrete_norm <- as.data.frame(lapply(concrete,normalize))
+summary(concrete_norm$strength)
+
+# 基于数据训练模型
+concrete_train <- concrete_norm[1:773,]
+concrete_test <- concrete_norm[774:1030,]
+
+install.packages("neuralnet")
+library(neuralnet)
+
+concrete_model <- neuralnet(strength ~ Cement+Slag+Ash+Water+Superplastic+CoarseAgg+FineAggregate+Age,data=concrete_train,hidden=1)
+plot(concrete_model)
+
+#评估
+model_results <- compute(concrete_model,concrete_test[1:8])
+predicted_strength <- model_results$net.result
+cor(predicted_strength,concrete_test$strength)                                  # 0.716
+
+#提高模型性能——增加隐藏层节点数
+concrete_model2 <- neuralnet(strength ~ Cement+Slag+Ash+Water+Superplastic+CoarseAgg+FineAggregate+Age,data=concrete_train,hidden=5)
+plot(concrete_model2)
+
+model_results2 <- compute(concrete_model2,concrete_test[1:8]) 
+predicted_strength2 <- model_results2$net.result
+cor(predicted_strength2,concrete_test$strength)                               # 0.63 ？？
