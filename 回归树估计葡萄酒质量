@@ -1,5 +1,38 @@
+# 数据收集和准备
 https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
 
 wine <- read.csv(file.choose(),stringsAsFactors=FALSE,header=TRUE,sep=";")
 str(wine)
+hist(wine$quality)
+wine_train <- wine[1:3750,]
+wine_test <- wine[3751:4898,]
 
+# 构建回归树，进行预测 
+install.packages("rpart")                                                    # rpart添加包中提供了可靠的回归树实现
+library(rpart)
+
+m.rpart <- rpart(quality ~ .,data=wine_train)                                # 返回一个回归树模型对象，用于预测
+
+install.packages("rpart.plot")                                               # 可视化决策树
+library(rpart.plot)
+
+rpart.plot(m.rpart,digits=3)
+rpart.plot(m.rpart,digits=4,fallen.leaves=TRUE,type=3,extra=101)             # fallen.leaves强制叶节点和图的底部保持一致
+                                                                               type,extra 影响决策和节点被标记的方式
+p.rpart <- predict(m.rpart,wine_test)                                        # 进行预测
+summary(p.rpart)
+summary(wine_test$quality)
+cor(p.rpart,wine_test$quality)                                               # 0.49
+
+MAE <- function(actual,predicted){                                           # 定义平均绝对误差函数，度量模型性能
+mean(abs(actual-predicted))
+}
+MAE(p.rpart,wine_test$quality)                                               # 0.57
+
+# 构建模型树，提高算法性能
+library(RWeka)
+m.m5p <- M5P(quality ~ .,data=wine_train)
+
+p.m5p <- predict(m.m5p,wine_test)
+summary(p.m5p)
+cor(p.m5p,wine_test$quality)                                                 # 0.53 
