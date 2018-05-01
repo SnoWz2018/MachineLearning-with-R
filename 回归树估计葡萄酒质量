@@ -1,0 +1,5 @@
+https://archive.ics.uci.edu/ml/machine-learning-databases/wine-quality/
+
+wine <- read.csv(file.choose(),stringsAsFactors=FALSE,header=TRUE,sep=";")
+str(wine)
+
